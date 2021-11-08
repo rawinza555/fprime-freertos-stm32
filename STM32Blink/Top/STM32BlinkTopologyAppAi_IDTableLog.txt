@@ -1,0 +1,26 @@
+     INSTANCE NAME      | BASE ID (HEX) | REQUESTED WINDOW SIZE | DIFFERENCED ID WINDOW SIZE | LARGEST COMPONENT INTERNAL ID | MAX AMOUNT OF IDS
+     fatalHandler       |    1 (0x1)    |          20           |             20             |             None              |         0        
+    rateGroup1Comp      |   21 (0x15)   |          20           |             40             |               2               |         2        
+        chanTlm         |   61 (0x3d)   |          20           |             60             |             None              |         0        
+        cmdDisp         |  121 (0x79)   |          20           |             40             |              11               |        11        
+    rateGroup2Comp      |  161 (0xa1)   |          20           |             80             |               2               |         2        
+    rateGroup3Comp      |  241 (0xf1)   |          20           |            100             |               2               |         2        
+     fatalAdapter       |  341 (0x155)  |          20           |             20             |               8               |         8        
+        health          |  361 (0x169)  |          20           |             60             |               8               |         8        
+      eventLogger       |  421 (0x1a5)  |          20           |             20             |               5               |         5        
+       RTOSTime         |  441 (0x1b9)  |          20           |             20             |             None              |         0        
+  rateGroupDriverComp   |  461 (0x1cd)  |          20           |             20             |             None              |         0        
+       blockDrv         |  481 (0x1e1)  |          20           |            180             |               1               |         1        
+        ledDrv          |  661 (0x295)  |          20           |             60             |             None              |         0        
+        blinker         |  721 (0x2d1)  |          20           |             40             |             None              |         0        
+        ground          |  761 (0x2f9)  |          20           |             40             |               1               |         1        
+        serial          |  801 (0x321)  |          20           |            inf.            |             None              |         0        
+-------------------------------------------------------------------------------------------------------------------------------------
+| INSTANCE NAME                 - Name of the instance object.                                                                      |
+| BASE ID (HEX)                 - Base ID set for the instance.                                                                     |
+| REQUESTED WINDOW SIZE         - Specified by either the 'base_id_range' attribute in the instance tag or by finding the max of th |
+|                                 e 'base_id_range' attribute in the topology tag and the largest internal ID of the instance.      |
+| DIFFERENCED ID WINDOW SIZE    - Calculated by subtracting the current base ID from the next base ID.                              |
+| LARGEST COMPONENT INTERNAL ID - The largest ID found in the events, channels, and commands of the instance.                       |
+| MAX AMOUNT OF IDS             - The largest amount of items from either events, channels, or commands.                            |
+-------------------------------------------------------------------------------------------------------------------------------------

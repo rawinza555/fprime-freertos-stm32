@@ -18,8 +18,8 @@
     <import_component_type>Drv/BlockDriver/BlockDriverComponentAi.xml</import_component_type>
 
     <import_component_type>Svc/RTOSTime/RTOSTimeComponentAi.xml</import_component_type>
-    <import_component_type>Drv/STM32GpioDriver/STM32GpioDriverComponentAi.xml</import_component_type>
-    <import_component_type>Drv/STM32SerialDriver/STM32SerialDriverComponentAi.xml</import_component_type>
+    <import_component_type>STM32Blink/STM32GpioDriver/STM32GpioDriverComponentAi.xml</import_component_type>
+    <import_component_type>STM32Blink/STM32SerialDriver/STM32SerialDriverComponentAi.xml</import_component_type>
     <import_component_type>STM32Blink/LedBlinker/LedBlinkerComponentAi.xml</import_component_type>
     <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
 
@@ -28,16 +28,15 @@
     <!-- Core C&DH Components -->
     <instance namespace="Svc" name="cmdDisp" type="CommandDispatcher" base_id="121"  base_id_window="20" />
     <instance namespace="Svc" name="chanTlm" type="TlmChan" base_id="61"  base_id_window="20" />
-    <instance namespace="Svc" name="prmDb" type="PrmDb" base_id="141"  base_id_window="20" />
     <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="421"  base_id_window="20" />
     <instance namespace="Svc" name="health" type="Health" base_id="361"  base_id_window="20" />
 
     <instance namespace="Svc" name="fatalAdapter" type="AssertFatalAdapter" base_id="341"  base_id_window="20" />
     <instance namespace="Svc" name="fatalHandler" type="FatalHandler" base_id="1"  base_id_window="20" />
-    <instance namespace="Svc" name="RTOSTime" type="RTOSTime" base_id="441"  base_id_window="20" />
+    <instance namespace="Svc" name="RTOSTime" type="Time" base_id="441"  base_id_window="20" />
 
-    <instance namespace="Drv" name="serial" type="STM32SerialDriver" base_id="801"  base_id_window="20" />
-    <instance namespace="Drv" name="ledDrv" type="STM32GpioDriver" base_id="661"  base_id_window="20" />
+    <instance namespace="STM32Blink" name="serial" type="STM32SerialDriver" base_id="801"  base_id_window="20" />
+    <instance namespace="STM32Blink" name="ledDrv" type="STM32GpioDriver" base_id="661"  base_id_window="20" />
     <instance namespace="STM32Blink" name="blinker" type="LedBlinker" base_id="721"  base_id_window="20" />
     <instance namespace="Svc" name="ground" type="GroundInterface" base_id="761"  base_id_window="20" />
 
@@ -279,7 +278,7 @@
     </connection>      
     <connection name = "groundInterfaceRg">
        <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
-       <target component = "groundInterface" port = "schedIn" type = "Sched" num = "0"/>
+       <target component = "ground" port = "schedIn" type = "Sched" num = "0"/>
    </connection>
    <connection name = "ledBlinkerRg">
        <source component = "rateGroup2Comp" port = "RateGroupMemberOut" type = "Sched" num = "1"/>

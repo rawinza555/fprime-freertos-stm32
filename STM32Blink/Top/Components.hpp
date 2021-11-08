@@ -19,13 +19,13 @@
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 
-#include <STM32Blink/LedBlinker/LedBlinkComponentImpl.hpp>
-#include <Drv/STM32SerialDriver/STM32SerialDriverComponentImpl.hpp>
-#include <Drv/STM32GpioDriver/STM32GpioDriverComponentImpl.hpp>
+#include <STM32Blink/LedBlinker/LedBlinkerComponentImpl.hpp>
+#include <STM32Blink/STM32SerialDriver/STM32SerialDriverComponentImpl.hpp>
+#include <STM32Blink/STM32GpioDriver/STM32GpioDriverComponentImpl.hpp>
 
 
 void constructSTM32BlinkArchitecture(void);
-bool constructApp();
+void constructApp();
 void exitTasks(void);
 
 
@@ -39,8 +39,8 @@ extern Drv::BlockDriverImpl blockDrv;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;
-extern Drv::STM32SerialDriverComponentImpl serial;
-extern Drv::STM32GpioDriverComponentImpl ledDrv;
+extern STM32Blink::STM32SerialDriverComponentImpl serial;
+extern STM32Blink::STM32GpioDriverComponentImpl ledDrv;
 extern STM32Blink::LedBlinkerComponentImpl blinker;
 extern Svc::RTOSTimeImpl RTOSTime;
 

@@ -44,8 +44,6 @@ Drv::BlockDriverImpl blockDrv(FW_OPTIONAL_NAME("BDRV"));
 
 Svc::ActiveLoggerImpl eventLogger(FW_OPTIONAL_NAME("ELOG"));
 
-Svc::LinuxTimeImpl linuxTime(FW_OPTIONAL_NAME("LTIME"));
-
 Svc::TlmChanImpl chanTlm(FW_OPTIONAL_NAME("TLM"));
 
 Svc::CommandDispatcherImpl cmdDisp(FW_OPTIONAL_NAME("CMDDISP"));
@@ -60,13 +58,13 @@ Svc::FatalHandlerComponentImpl fatalHandler(FW_OPTIONAL_NAME("fatalHandler"));
 
 Svc::GroundInterfaceComponentImpl ground(FW_OPTIONAL_NAME("ground"));
 
-Drv::STM32SerialDriverComponentImpl serial(FW_OPTIONAL_NAME("serial"));
+STM32Blink::STM32SerialDriverComponentImpl serial(FW_OPTIONAL_NAME("serial"));
 
-Drv::STM32GpioDriverComponentImpl ledDrv(FW_OPTIONAL_NAME("ledDrv"));
+STM32Blink::STM32GpioDriverComponentImpl ledDrv(FW_OPTIONAL_NAME("ledDrv"));
 
 Svc::RTOSTimeImpl RTOSTime(FW_OPTIONAL_NAME("RTOSTime"));
 
-STM32Blink::LEDBlinkerComponentImpl blinker(FW_OPTIONAL_NAME("blinker"));
+STM32Blink::LedBlinkerComponentImpl blinker(FW_OPTIONAL_NAME("blinker"));
 
 const char* getHealthName(Fw::ObjBase& comp) {
    #if FW_OBJECT_NAMES == 1
@@ -120,7 +118,6 @@ void constructApp() {
     health.regCommands();
 
     // read parameters
-    prmDb.readParamFile();
     // set up BufferManager instances
     
     // set health ping entries
@@ -148,18 +145,11 @@ void constructApp() {
     // start dispatcher
     cmdDisp.start(0,101,10*1024);
     // start sequencer
-    cmdSeq.start(0,100,10*1024);
     // start telemetry
     eventLogger.start(0,98,10*1024);
     chanTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
 
-    fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
-    fileManager.start(0, 100, 10*1024);
-    ioTest.start(0, 100, 10*1024);
     ledDrv.open();
-    serial.open();
 
 }
 
@@ -167,16 +157,10 @@ void exitTasks(void) {
     rateGroup1Comp.exit();
     rateGroup2Comp.exit();
     rateGroup3Comp.exit();
-    ioTest.exit();
     blockDrv.exit();
     cmdDisp.exit();
     eventLogger.exit();
     chanTlm.exit();
-    prmDb.exit();
-    fileUplink.exit();
-    fileDownlink.exit();
-    fileManager.exit();
-    cmdSeq.exit();
     // join the component threads with NULL pointers to free them
     (void) rateGroup1Comp.ActiveComponentBase::join(NULL);
     (void) rateGroup2Comp.ActiveComponentBase::join(NULL);
@@ -185,14 +169,6 @@ void exitTasks(void) {
     (void) cmdDisp.ActiveComponentBase::join(NULL);
     (void) eventLogger.ActiveComponentBase::join(NULL);
     (void) chanTlm.ActiveComponentBase::join(NULL);
-    (void) prmDb.ActiveComponentBase::join(NULL);
-    (void) fileUplink.ActiveComponentBase::join(NULL);
-    (void) fileDownlink.ActiveComponentBase::join(NULL);
-    (void) fileManager.ActiveComponentBase::join(NULL);
-    (void) cmdSeq.ActiveComponentBase::join(NULL);
-    comm.stopSocketTask();
-    (void) comm.joinSocketTask(NULL);
-    cmdSeq.deallocateBuffer(mallocator);
-    fileUplinkBufferManager.cleanup();
+
 }
 

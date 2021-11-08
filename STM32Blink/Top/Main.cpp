@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include <STM32/Top/Components.hpp>
+#include <STM32Blink/Top/Components.hpp>
 
-volatile sig_atomic_t terminate = 0;
 
 #include <signal.h>
 #include <stdio.h>
@@ -30,23 +29,16 @@ void runcycles(NATIVE_INT_TYPE cycles) {
 }
 
 int main(int argc, char* argv[]) {
+    int cycle = 0;
     
     constructApp();
-
-
-    int cycle = 0;
-
-    while (!terminate) {
+    while (1) {
 //        (void) printf("Cycle %d\n",cycle);
         runcycles(1);
         cycle++;
     }
 
-    // Give time for threads to exit
-    (void) printf("Waiting for threads...\n");
-    Os::Task::delay(1000);
 
-    (void) printf("Exiting...\n");
 
     return 0;
 }
