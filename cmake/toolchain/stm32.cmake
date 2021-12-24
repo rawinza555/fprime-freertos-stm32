@@ -39,34 +39,54 @@
 ## STEP 2: Specify the target system's name. i.e. raspberry-pi-3
 set(CMAKE_SYSTEM_NAME "freertos")
 set(CMAKE_SYSTEM_PROCESSOR arm)
+set(MCU_MODEL STM32H743xx)
+set(CMAKE_CROSSCOMPILING 1)
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_ASM_COMPILER_WORKS 1)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 SET(STM32_BSP_PATH "${CMAKE_CURRENT_LIST_DIR}/../../NucleoH7_freeRTOS" CACHE PATH "Path to STM32 BSP")
-set(STM32_CORE_SRC "${STM32_BSP_PATH}/Core/Src")
-set(STM32_CORE_INC "${STM32_BSP_PATH}/Core/Inc")
-set(STM32_HAL_SRC "${STM32_BSP_PATH}/Drivers/STM32H7xx_HAL_Driver/Src")
-set(STM32_HAL_INC "${STM32_BSP_PATH}/Drivers/STM32H7xx_HAL_Driver/Inc")
-set(STM32_HAL_INC_LEGACY "${STM32_BSP_PATH}/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy")
-set(FREERTOS_PATH_SRC "${STM32_BSP_PATH}/Middlewares/Third_Party/FreeRTOS/Source")
-set(FREERTOS_CMSIS "${FREERTOS_PATH_SRC}/CMSIS_RTOS_V2")
-set(FREERTOS_PATH_INC "${FREERTOS_PATH_SRC}/include")
 
+set(TOOLCHAIN_PREFIX arm-none-eabi-)
 # STEP 3: Specify the path to C and CXX cross compilers
-set(CMAKE_C_COMPILER "/home/rawinza555/gcc-arm-none-eabi-10.3-2021.07/bin/arm-none-eabi-gcc")
-set(CMAKE_CXX_COMPILER "/home/rawinza555/gcc-arm-none-eabi-10.3-2021.07/bin/arm-none-eabi-g++")
-set(CMAKE_CXX_LINK_EXECUTABLE "${STM32_BSP_PATH}/STM32H743ZITx_FLASH.ld -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
-set(COMPILER_COMMON_FLAGS
-    "-DTGT_OS_TYPE_FREERTOS \
-    -D__FREERTOS__ \
-    -D__ELF__  \
+set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}gcc)
+set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER})
+set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}g++)
+set(CMAKE_LINKER ${TOOLCHAIN_PREFIX}ld)
+set(CMAKE_OBJCOPY ${TOOLCHAIN_PREFIX}objcopy)
+set(CMAKE_SIZE ${TOOLCHAIN_PREFIX}size)
+
+set(MCU_LINKER_SCRIPT ${STM32_BSP_PATH}/STM32H743ZITx_FLASH.ld)
+
+set(CPU_PARAMETERS
+    -mcpu=cortex-m7
+    -mthumb
+    -mfpu=fpv5-sp-d16
+    -mfloat-abi=hard)
+set(STM32_LD  "-T${MCU_LINKER_SCRIPT} \
     -mcpu=cortex-m7 \
-    -mfpu=fpv5-d16 \
+    -mthumb \
+    -mfpu=fpv5-sp-d16 \
     -mfloat-abi=hard \
+    -Wl,-Map=${CMAKE_PROJECT_NAME}.map \
+    --specs=nosys.specs \
+    -Wl,--start-group \
+    -lc \
+    -lm \
+    -lstdc++ \
+    -lsupc++ \
+    -Wl,--end-group") 
+set(COMPILER_COMMON_FLAGS
+    "-fdata-sections -ffunction-sections \
     -DUSE_HAL_DRIVER \
+    -DTGT_OS_TYPE_FREERTOS \
+    -mcpu=cortex-m7 \
+    -mthumb \
+    -mfpu=fpv5-sp-d16 \
+    -mfloat-abi=hard \
     -DSTM32H743xx \
-    -Wall \
-    -fdata-sections \
-    -ffunction-sections \
-    -mthumb "
+    --specs=nano.specs -Wl,--gc-sections"
     )    
 set(CMAKE_C_FLAGS
     "${COMPILER_COMMON_FLAGS} \
@@ -74,14 +94,12 @@ set(CMAKE_C_FLAGS
     )  
 set(CMAKE_CXX_FLAGS
     "${COMPILER_COMMON_FLAGS} \
-    -std=c++14"
+    -std=c++14 \
+    -fno-rtti \
+    -fno-exceptions \
+    -fno-threadsafe-statics"
     )
-set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections --specs=nano.specs --specs=nosys.specs -mthumb -mabi=aapcs -Wl,-Map=${CMAKE_PROJECT_NAME}.map" CACHE INTERNAL "Linker options")
-set(CMAKE_CROSSCOMPILING 1)
-set(CMAKE_C_COMPILER_WORKS 1)
-set(CMAKE_CXX_COMPILER_WORKS 1)
-set(CMAKE_ASM_COMPILER_WORKS 1)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+set(CMAKE_EXE_LINKER_FLAGS ${STM32_LD})
 
 
 # STEP 4: Specify paths to root of toolchain package, for searching for

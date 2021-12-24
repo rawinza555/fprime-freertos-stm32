@@ -54,6 +54,7 @@ if (FPRIME_USE_POSIX)
     )
 endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "freertos")
+    message(STATUS "Detecting freeRTOS")
   list(APPEND SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/LogPrintf.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/freeRTOS/InterruptLock.cpp"
@@ -66,7 +67,19 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "freertos")
         "${FPRIME_FRAMEWORK_PATH}/Os/Baremetal/File.cpp"
         "${FPRIME_FRAMEWORK_PATH}/Os/Baremetal/FileSystem.cpp"
       )
-  list(APPEND MOD_DEPS "NucleoH7_freeRTOS")
+  list(APPEND MOD_DEPS
+        STM32Blink/NucleoH7_freeRTOS
+      )
+  # set(MOD_DEPS
+  #   NucleoH7_freeRTOS/Core/Inc
+  #   NucleoH7_freeRTOS/Drivers/STM32H7xx_HAL_Driver/Inc
+  #   NucleoH7_freeRTOS/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
+  #   NucleoH7_freeRTOS/Drivers/CMSIS/Include
+  #   NucleoH7_freeRTOS/Drivers/CMSIS/Device/ST/STM32H7xx/Include
+  #   NucleoH7_freeRTOS/Middlewares/Third_Party/FreeRTOS/Source/include 
+  #   NucleoH7_freeRTOS/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+  #   NucleoH7_freeRTOS/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
+  # Communication Implementations
 endif()
 # Darwin IPC queue implementation
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
@@ -102,9 +115,7 @@ register_fprime_module()
 if (CMAKE_BUILD_TYPE STREQUAL "TESTING")
     add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Stubs/")
 endif()
-if(COMP_DEFS MATCHES "TGT_OS_TYPE_freertos")
-    target_link_libraries(Os ${FREERTOS_CMSIS})
-endif()
+
 
 ### UTS ### Note: 3 separate UTs registered here.
 set(UT_SOURCE_FILES

@@ -1,0 +1,358 @@
+<dictionary topology="STM32Blink" framework_version="2.0.1.dev94+gcfb844716.d20211224">
+  <enums>
+    <enum type="CommandDispatcher::error::ErrorResponse">
+      <item name="ERR_INVALID_OPCODE" value="0" description="Invalid opcode dispatched"/>
+      <item name="ERR_VALIDATION_ERROR" value="1" description="Command failed validation"/>
+      <item name="ERR_FORMAT_ERROR" value="2" description="Command failed to deserialize"/>
+      <item name="ERR_EXECUTION_ERROR" value="3" description="Command had execution error"/>
+      <item name="ERR_BUSY" value="4" description="Component busy"/>
+      <item name="ERR_UNEXP" value="5" description="Unexpected response"/>
+    </enum>
+    <enum type="CommandDispatcher::Status::CmdSerError">
+      <item name="ERR_BUFFER_TOO_SMALL" value="0" description="Buffer too small"/>
+      <item name="ERR_BUFFER_FORMAT" value="1" description="Buffer wrong format"/>
+      <item name="ERR_SIZE_MISMATCH" value="2" description="Buffer size mismatch"/>
+      <item name="ERR_TYPE_MISMATCH" value="3" description="Buffer type mismatch"/>
+      <item name="ERR_UNEXP_STAT" value="4" description="Unexpected status"/>
+    </enum>
+    <enum type="ActiveLogger::FilterLevel::EventLevel">
+      <item name="FILTER_WARNING_HI" value="0"/>
+      <item name="FILTER_WARNING_LO" value="1"/>
+      <item name="FILTER_COMMAND" value="2"/>
+      <item name="FILTER_ACTIVITY_HI" value="3"/>
+      <item name="FILTER_ACTIVITY_LO" value="4"/>
+      <item name="FILTER_DIAGNOSTIC" value="5"/>
+    </enum>
+    <enum type="ActiveLogger::FilterEnable::FilterEnabled">
+      <item name="FILTER_ENABLED" value="0"/>
+      <item name="FILTER_DISABLED" value="1"/>
+    </enum>
+    <enum type="ActiveLogger::IdFilterEnable::IdFilterEnabled">
+      <item name="ID_ENABLED" value="0"/>
+      <item name="ID_DISABLED" value="1"/>
+    </enum>
+    <enum type="ActiveLogger::severity::EventFilterState">
+      <item name="FILT_WARNING_HI" value="0"/>
+      <item name="FILT_WARNING_LO" value="1"/>
+      <item name="FILT_COMMAND" value="2"/>
+      <item name="FILT_ACTIVITY_HI" value="3"/>
+      <item name="FILT_ACTIVITY_LO" value="4"/>
+      <item name="FILT_DIAGNOSTIC" value="5"/>
+    </enum>
+    <enum type="Health::enable::HealthEnabled">
+      <item name="HLTH_CHK_DISABLED" value="0"/>
+      <item name="HLTH_CHK_ENABLED" value="1"/>
+    </enum>
+    <enum type="Health::enable::PingEnabled">
+      <item name="HLTH_PING_DISABLED" value="0"/>
+      <item name="HLTH_PING_ENABLED" value="1"/>
+    </enum>
+    <enum type="Health::enabled::HealthIsEnabled">
+      <item name="HEALTH_CHECK_DISABLED" value="0"/>
+      <item name="HEALTH_CHECK_ENABLED" value="1"/>
+    </enum>
+    <enum type="Health::enabled::HealthPingIsEnabled">
+      <item name="HEALTH_PING_DISABLED" value="0"/>
+      <item name="HEALTH_PING_ENABLED" value="1"/>
+    </enum>
+  </enums>
+  <serializables/>
+  <arrays/>
+  <commands>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP" opcode="0x79">
+      <args/>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_NO_OP_STRING" opcode="0x7a">
+      <args>
+        <arg name="arg1" len="40" type="string"/>
+      </args>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_TEST_CMD_1" opcode="0x7b">
+      <args>
+        <arg name="arg1" type="I32"/>
+        <arg name="arg2" type="F32"/>
+        <arg name="arg3" type="U8"/>
+      </args>
+    </command>
+    <command component="cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x7c">
+      <args/>
+    </command>
+    <command component="eventLogger" mnemonic="SET_EVENT_FILTER" opcode="0x1a5">
+      <args>
+        <arg name="FilterLevel" type="ActiveLogger::FilterLevel::EventLevel"/>
+        <arg name="FilterEnable" type="ActiveLogger::FilterEnable::FilterEnabled"/>
+      </args>
+    </command>
+    <command component="eventLogger" mnemonic="SET_ID_FILTER" opcode="0x1a7">
+      <args>
+        <arg name="ID" type="U32"/>
+        <arg name="IdFilterEnable" type="ActiveLogger::IdFilterEnable::IdFilterEnabled"/>
+      </args>
+    </command>
+    <command component="eventLogger" mnemonic="DUMP_FILTER_STATE" opcode="0x1a8">
+      <args/>
+    </command>
+    <command component="health" mnemonic="HLTH_ENABLE" opcode="0x169">
+      <args>
+        <arg name="enable" type="Health::enable::HealthEnabled"/>
+      </args>
+    </command>
+    <command component="health" mnemonic="HLTH_PING_ENABLE" opcode="0x16a">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="enable" type="Health::enable::PingEnabled"/>
+      </args>
+    </command>
+    <command component="health" mnemonic="HLTH_CHNG_PING" opcode="0x16b">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="warningValue" type="U32"/>
+        <arg name="fatalValue" type="U32"/>
+      </args>
+    </command>
+  </commands>
+  <events>
+    <event component="cmdDisp" name="OpCodeRegistered" id="0x79" severity="DIAGNOSTIC" format_string="Opcode 0x%04X registered to port %d slot %d">
+      <args>
+        <arg name="Opcode" type="U32"/>
+        <arg name="port" type="I32"/>
+        <arg name="slot" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeDispatched" id="0x7a" severity="COMMAND" format_string="Opcode 0x%04X dispatched to port %d">
+      <args>
+        <arg name="Opcode" type="U32"/>
+        <arg name="port" type="I32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeCompleted" id="0x7b" severity="COMMAND" format_string="Opcode 0x%04X completed">
+      <args>
+        <arg name="Opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeError" id="0x7c" severity="WARNING_HI" format_string="Opcode 0x%04X completed with error %s ">
+      <args>
+        <arg name="Opcode" type="U32"/>
+        <arg name="error" type="CommandDispatcher::error::ErrorResponse"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="MalformedCommand" id="0x7d" severity="WARNING_HI" format_string="Received malformed command packet. Status: %s">
+      <args>
+        <arg name="Status" type="CommandDispatcher::Status::CmdSerError"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="InvalidCommand" id="0x7e" severity="WARNING_HI" format_string="Invalid opcode 0x%04X received.">
+      <args>
+        <arg name="Opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="TooManyCommands" id="0x7f" severity="WARNING_HI" format_string="Too many outstanding commands. opcode=0x%04X">
+      <args>
+        <arg name="Opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="NoOpReceived" id="0x80" severity="ACTIVITY_HI" format_string="Received a NO-OP command">
+      <args/>
+    </event>
+    <event component="cmdDisp" name="NoOpStringReceived" id="0x81" severity="ACTIVITY_HI" format_string="Received a NO-OP string=%s">
+      <args>
+        <arg name="message" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="TestCmd1Args" id="0x82" severity="ACTIVITY_HI" format_string="TEST_CMD_1 args: I32: %d, F32: %f, U8: %d">
+      <args>
+        <arg name="arg1" type="I32"/>
+        <arg name="arg2" type="F32"/>
+        <arg name="arg3" type="U8"/>
+      </args>
+    </event>
+    <event component="cmdDisp" name="OpCodeReregistered" id="0x83" severity="DIAGNOSTIC" format_string="Opcode 0x%04X is already registered to port %d">
+      <args>
+        <arg name="Opcode" type="U32"/>
+        <arg name="port" type="I32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="SEVERITY_FILTER_STATE" id="0x1a5" severity="ACTIVITY_LO" format_string="%s filter state. %d">
+      <args>
+        <arg name="severity" type="ActiveLogger::severity::EventFilterState"/>
+        <arg name="enabled" type="bool"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_ENABLED" id="0x1a6" severity="ACTIVITY_HI" format_string="ID %d is filtered.">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_LIST_FULL" id="0x1a7" severity="WARNING_LO" format_string="ID filter list is full. Cannot filter %d .">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_REMOVED" id="0x1a8" severity="ACTIVITY_HI" format_string="ID filter ID %d removed.">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="eventLogger" name="ID_FILTER_NOT_FOUND" id="0x1a9" severity="WARNING_LO" format_string="ID filter ID %d not found.">
+      <args>
+        <arg name="ID" type="U32"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_WARN" id="0x169" severity="WARNING_HI" format_string="Ping entry %s late warning">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_LATE" id="0x16a" severity="FATAL" format_string="Ping entry %s did not respond">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_WRONG_KEY" id="0x16b" severity="FATAL" format_string="Ping entry %s responded with wrong key 0x%08X">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="badKey" type="U32"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_CHECK_ENABLE" id="0x16c" severity="ACTIVITY_HI" format_string="Health checking set to %s">
+      <args>
+        <arg name="enabled" type="Health::enabled::HealthIsEnabled"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_CHECK_PING" id="0x16d" severity="ACTIVITY_HI" format_string="Health checking set to %s for %s">
+      <args>
+        <arg name="enabled" type="Health::enabled::HealthPingIsEnabled"/>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_CHECK_LOOKUP_ERROR" id="0x16e" severity="WARNING_LO" format_string="Couldn't find entry %s">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_UPDATED" id="0x16f" severity="ACTIVITY_HI" format_string="Health ping for %s changed to WARN %d FATAL %d">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="warn" type="U32"/>
+        <arg name="fatal" type="U32"/>
+      </args>
+    </event>
+    <event component="health" name="HLTH_PING_INVALID_VALUES" id="0x170" severity="WARNING_HI" format_string="Health ping for %s invalid values: WARN %d FATAL %d">
+      <args>
+        <arg name="entry" len="40" type="string"/>
+        <arg name="warn" type="U32"/>
+        <arg name="fatal" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_0" id="0x155" severity="FATAL" format_string="Assert in file %s, line %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_1" id="0x156" severity="FATAL" format_string="Assert in file %s, line %d: %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_2" id="0x157" severity="FATAL" format_string="Assert in file %s, line %d: %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_3" id="0x158" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_4" id="0x159" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_5" id="0x15a" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+        <arg name="arg5" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_ASSERT_6" id="0x15b" severity="FATAL" format_string="Assert in file %s, line %d: %d %d %d %d %d %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="arg1" type="U32"/>
+        <arg name="arg2" type="U32"/>
+        <arg name="arg3" type="U32"/>
+        <arg name="arg4" type="U32"/>
+        <arg name="arg5" type="U32"/>
+        <arg name="arg6" type="U32"/>
+      </args>
+    </event>
+    <event component="fatalAdapter" name="AF_UNEXPECTED_ASSERT" id="0x15c" severity="FATAL" format_string="Unexpected assert in file %s, line %d, args %d">
+      <args>
+        <arg name="file" len="80" type="string"/>
+        <arg name="line" type="U32"/>
+        <arg name="numArgs" type="U32"/>
+      </args>
+    </event>
+    <event component="ground" name="GroundInterfaceError" id="0x2f9" severity="WARNING_HI" format_string="Ground interface encountered an error">
+      <args/>
+    </event>
+    <event component="rateGroup1Comp" name="RateGroupStarted" id="0x15" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup1Comp" name="RateGroupCycleSlip" id="0x16" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+    <event component="rateGroup2Comp" name="RateGroupStarted" id="0xa1" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup2Comp" name="RateGroupCycleSlip" id="0xa2" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+    <event component="rateGroup3Comp" name="RateGroupStarted" id="0xf1" severity="DIAGNOSTIC" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="rateGroup3Comp" name="RateGroupCycleSlip" id="0xf2" severity="WARNING_HI" format_string="Rate group cycle slipped on cycle %d">
+      <args>
+        <arg name="cycle" type="U32"/>
+      </args>
+    </event>
+  </events>
+  <channels>
+    <channel component="cmdDisp" name="CommandsDispatched" id="0x79" description="Number of commands dispatched" type="U32"/>
+    <channel component="cmdDisp" name="CommandErrors" id="0x7a" description="Number of command errors" type="U32"/>
+    <channel component="health" name="PingLateWarnings" id="0x169" description="Number of overrun warnings" type="U32"/>
+    <channel component="rateGroup1Comp" name="RgMaxTime" id="0x15" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup1Comp" name="RgCycleSlips" id="0x16" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup2Comp" name="RgMaxTime" id="0xa1" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup2Comp" name="RgCycleSlips" id="0xa2" description="Cycle slips for rate group" type="U32"/>
+    <channel component="rateGroup3Comp" name="RgMaxTime" id="0xf1" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="rateGroup3Comp" name="RgCycleSlips" id="0xf2" description="Cycle slips for rate group" type="U32"/>
+    <channel component="blockDrv" name="BD_Cycles" id="0x1e1" description="Driver cycle count" type="U32"/>
+  </channels>
+  <parameters/>
+</dictionary>
